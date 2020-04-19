@@ -72,3 +72,16 @@ func SaveProject(c *gin.Context) {
 		"msg": "ok",
 	})
 }
+
+func FindProjectsByUser(c *gin.Context) {
+	uid := getUser(c) //用户编号
+	codeOrName := c.Query("codeOrName")
+	l, err := projectDao.FindAllByUser(uid, codeOrName)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"msg": err.Error,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, l)
+}

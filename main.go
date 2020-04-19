@@ -30,6 +30,7 @@ func main() {
 				ide.GET("/user/name/:name", http.FindUserByName)
 				ide.GET("/project/code/:code", http.FindProjectByCode)
 				ide.POST("/project", http.SaveProject)
+				ide.GET("/project/user", http.FindProjectsByUser)
 			}
 		}
 	}
