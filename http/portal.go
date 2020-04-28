@@ -22,10 +22,12 @@ const (
 )
 
 var (
-	prefixLength int
-	config                      = conf.GetConfig()
-	userDao      dao.UserDao    = dao.NewUserDao()
-	projectDao   dao.ProjectDao = dao.NewProjectDao()
+	prefixLength  int
+	config                          = conf.GetConfig()
+	userDao       dao.UserDao       = dao.NewUserDao()
+	projectDao    dao.ProjectDao    = dao.NewProjectDao()
+	catalogDao    dao.CatalogDao    = dao.NewCatalogDao()
+	connectionDao dao.ConnectionDao = dao.NewConnectionDao()
 )
 
 func init() {

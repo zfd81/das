@@ -21,7 +21,7 @@ type UserInfo struct {
 }
 
 func (u UserInfo) TableName() string {
-	return "sys_user"
+	return "das_sys_user"
 }
 
 type ProjectInfo struct {
@@ -33,19 +33,39 @@ type ProjectInfo struct {
 }
 
 func (p ProjectInfo) TableName() string {
-	return "project"
+	return "das_project"
 }
 
-type Catalog struct {
-	Code   string `rsql:"name:code"`
-	Name   string `rsql:"name:name"`
-	order  int    `rsql:"name:ord"`
-	Parent string `rsql:"name:parent_id"`
+type CatalogInfo struct {
+	Code    string `rsql:"name:catalog_code"`
+	Name    string `rsql:"name:catalog_name"`
+	Order   int    `rsql:"name:ord"`
+	Parent  string `rsql:"name:parent_code"`
+	Project string `rsql:"name:project_code"`
+	Status  string `rsql:"name:status"`
 	Model
 }
 
-func (c Catalog) TableName() string {
+func (c CatalogInfo) TableName() string {
 	return "das_catalog"
+}
+
+type ConnectionInfo struct {
+	ID           string `rsql:"name:conn_id"`
+	Name         string `rsql:"name:conn_name"`
+	Driver       string `rsql:"name:driver"`
+	Address      string `rsql:"name:address"`
+	Port         string `rsql:"name:port"`
+	UserName     string `rsql:"name:user_name"`
+	Password     string `rsql:"name:password"`
+	DatabaseName string `rsql:"name:db"`
+	Project      string `rsql:"name:project_code"`
+	Status       string `rsql:"name:status"`
+	Model
+}
+
+func (c ConnectionInfo) TableName() string {
+	return "das_connection"
 }
 
 type Service struct {

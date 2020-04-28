@@ -3,9 +3,10 @@ package dao
 import "github.com/zfd81/rooster/types/container"
 
 type ProjectDao interface {
-	FindByCode(name string) (*ProjectInfo, error)
+	FindByCode(code string) (*ProjectInfo, error)
 	Save(entity *ProjectInfo) error
 	FindAllByUser(userId string, codeOrName string) ([]container.Map, error)
+	Modify(entity *ProjectInfo) error
 }
 
 type ProjectDaoImpl struct {
@@ -13,7 +14,7 @@ type ProjectDaoImpl struct {
 
 func (u *ProjectDaoImpl) FindByCode(code string) (*ProjectInfo, error) {
 	project := &ProjectInfo{}
-	sql := "select code from project where code=:val"
+	sql := "select code,name,description,creator from das_project where code=:val"
 	err := db.QueryStruct(project, sql, code)
 	return project, err
 }
@@ -38,8 +39,8 @@ func (u *ProjectDaoImpl) FindAllByUser(userId string, codeOrName string) ([]cont
 					p.created_time,
 					'owner' identity
 				FROM
-					project p,
-					sys_user u
+					das_project p,
+					das_sys_user u
 				WHERE
 					p.creator = u.id
 				AND p.status = '1'
@@ -53,9 +54,9 @@ func (u *ProjectDaoImpl) FindAllByUser(userId string, codeOrName string) ([]cont
 					p.created_time,
 					'user' identity
 				FROM
-					project p,
-					sys_user u,
-					rel_user_project up
+					das_project p,
+					das_sys_user u,
+					das_rel_user_project up
 				WHERE
 					p.creator = u.id
 				AND p.code = up.project_code
@@ -69,6 +70,12 @@ func (u *ProjectDaoImpl) FindAllByUser(userId string, codeOrName string) ([]cont
 		return make([]container.Map, 0, 10), err
 	}
 	return r.MapListScan()
+}
+
+func (p *ProjectDaoImpl) Modify(entity *ProjectInfo) (err error) {
+	sql := "UPDATE das_project SET name=:name, description=:description, modifier=:modifier, modified_time=:modified_time where code=:code"
+	_, err = db.Exec(sql, entity)
+	return
 }
 
 func NewProjectDao() *ProjectDaoImpl {
