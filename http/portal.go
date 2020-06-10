@@ -28,6 +28,7 @@ var (
 	projectDao    dao.ProjectDao    = dao.NewProjectDao()
 	catalogDao    dao.CatalogDao    = dao.NewCatalogDao()
 	connectionDao dao.ConnectionDao = dao.NewConnectionDao()
+	serviceDao    dao.ServiceDao    = dao.NewServiceDao()
 )
 
 func init() {

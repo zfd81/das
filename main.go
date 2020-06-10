@@ -46,6 +46,7 @@ func main() {
 				ide.PUT("/conn", http.ModifyConnection)
 				ide.GET("/conn/id/:id", http.FindConnectionById)
 				ide.GET("/conn/pro/:pro", http.FindConnectionsByProject)
+				ide.POST("/serv/param/parsing", http.ParsingParam)
 			}
 		}
 	}

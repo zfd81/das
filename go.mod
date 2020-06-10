@@ -8,5 +8,5 @@ require (
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/spf13/cast v1.3.1
 	github.com/spf13/viper v1.6.3
-	github.com/zfd81/rooster v0.0.0-20200427024910-2e603b82aaab
+	github.com/zfd81/rooster v0.0.0-20200429005029-532e9f61faad
 )

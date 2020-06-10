@@ -68,14 +68,18 @@ func (c ConnectionInfo) TableName() string {
 	return "das_connection"
 }
 
-type Service struct {
-	Code    string `rsql:"name:code"`
-	Name    string `rsql:"name:name"`
-	Method  int    `rsql:"name:method"`
-	Catalog string `rsql:"name:catalog_id"`
+type ServiceInfo struct {
+	Code    string `rsql:"name:serv_code"`
+	Name    string `rsql:"name:serv_name"`
+	Catalog string `rsql:"name:serv_catalog"`
+	Type    string `rsql:"name:serv_type"`
+	Sql     string `rsql:"name:serv_sql"`
+	Param   string `rsql:"name:serv_param"`
+	Version string `rsql:"name:version"`
+	Status  string `rsql:"name:status"`
 	Model
 }
 
-func (s Service) TableName() string {
+func (s ServiceInfo) TableName() string {
 	return "das_service"
 }

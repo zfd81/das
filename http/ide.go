@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/zfd81/das/util"
+
 	"github.com/spf13/cast"
 
 	"github.com/zfd81/das/meta"
@@ -427,4 +429,198 @@ func FindUsersNotInProject(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, l)
+}
+
+func FindServicesByCatalog(c *gin.Context) {
+	catalog := c.Param("catalog")
+	l, err := serviceDao.FindAllByCatalog(catalog)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"msg": err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, l)
+}
+
+func RenameService(c *gin.Context) {
+	uid := getUser(c) //用户编号
+	p := param(c)
+	t := time.Now()
+	serv := &dao.ServiceInfo{
+		Name:    p.GetString("name"),
+		Version: p.GetString("ver"),
+		Model: dao.Model{
+			Modifier:     uid,
+			ModifiedTime: t,
+		},
+	}
+	err := serviceDao.ModifyName(serv)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"msg": err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"msg": "ok",
+	})
+}
+
+func MoveService(c *gin.Context) {
+	uid := getUser(c) //用户编号
+	p := param(c)
+	t := time.Now()
+	serv := &dao.ServiceInfo{
+		Catalog: p.GetString("catalog"),
+		Version: p.GetString("ver"),
+		Model: dao.Model{
+			Modifier:     uid,
+			ModifiedTime: t,
+		},
+	}
+	err := serviceDao.ModifyCatalog(serv)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"msg": err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"msg": "ok",
+	})
+}
+
+func FindServiceById(c *gin.Context) {
+	id := c.Param("id")
+	version := c.Param("ver")
+	serv, err := serviceDao.FindById(id, version)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"msg": err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, serv)
+}
+
+func SaveService(c *gin.Context) {
+	uid := getUser(c) //用户编号
+	p := param(c)
+	t := time.Now()
+	serv := &dao.ServiceInfo{
+		Code:    t.Format("20060102150405"),
+		Name:    p.GetString("name"),
+		Catalog: p.GetString("driver"),
+		Type:    p.GetString("address"),
+		Sql:     p.GetString("port"),
+		Param:   p.GetString("user"),
+		Version: "1",
+		Status:  "1",
+		Model: dao.Model{
+			Creator:      uid,
+			CreatedTime:  t,
+			Modifier:     uid,
+			ModifiedTime: t,
+		},
+	}
+	err := serviceDao.Save(serv)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"msg": err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"msg": "ok",
+	})
+}
+
+func ModifyService(c *gin.Context) {
+	uid := getUser(c) //用户编号
+	p := param(c)
+	t := time.Now()
+	serv := &dao.ServiceInfo{
+		Code:    p.GetString("code"),
+		Sql:     p.GetString("port"),
+		Param:   p.GetString("user"),
+		Version: p.GetString("ver"),
+		Model: dao.Model{
+			Modifier:     uid,
+			ModifiedTime: t,
+		},
+	}
+	err := serviceDao.Modify(serv)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"msg": err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"msg": "ok",
+	})
+}
+
+func RemoveService(c *gin.Context) {
+	uid := getUser(c) //用户编号
+	p := param(c)
+	t := time.Now()
+	serv := &dao.ServiceInfo{
+		Code:    p.GetString("code"),
+		Version: p.GetString("ver"),
+		Status:  "-1",
+		Model: dao.Model{
+			Modifier:     uid,
+			ModifiedTime: t,
+		},
+	}
+	err := serviceDao.ModifyStatus(serv)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"msg": err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"msg": "ok",
+	})
+}
+
+func ParsingParam(c *gin.Context) {
+	p := param(c)
+	ps, err := util.ParsingSql(p.GetString("sql"))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"msg": err.Error(),
+		})
+		return
+	}
+	nodes := make([]TreeNode, 0, 10)
+	for _, v := range ps {
+		val, ok := v.Val.([]util.KV)
+		if ok {
+			node := TreeNode{
+				Id:       v.Key,
+				Label:    v.Key,
+				Type:     "cat",
+				Children: make([]TreeNode, 0, 10),
+			}
+			for _, v1 := range val {
+				node.Children = append(node.Children, TreeNode{
+					Id:    v1.Key,
+					Label: cast.ToString(v1.Val),
+					Type:  "param",
+				})
+			}
+			nodes = append(nodes, node)
+		} else {
+			nodes = append(nodes, TreeNode{
+				Id:    v.Key,
+				Label: cast.ToString(v.Val),
+				Type:  "param",
+			})
+		}
+	}
+	c.JSON(http.StatusOK, nodes)
 }
