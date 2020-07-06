@@ -4,7 +4,7 @@
 
 ### USER \<subcommand\>
 
-USER provides commands for managing users of etcd.
+USER provides commands for managing users of das.
 
 ### USER ADD \<user name or user:password\> [options]
 
