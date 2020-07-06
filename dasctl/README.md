@@ -46,7 +46,7 @@ Detailed user information.
 #### Examples
 
 ```bash
-./etcdctl --user=root:123 user get myuser
+./dasctl --user=root:123 user get myuser
 # User: myuser
 # Roles:
 ```
@@ -64,7 +64,7 @@ RPC: UserDelete
 #### Examples
 
 ```bash
-./etcdctl --user=root:123 user delete myuser
+./dasctl --user=root:123 user delete myuser
 # User myuser deleted
 ```
 
@@ -81,7 +81,7 @@ RPC: UserList
 #### Examples
 
 ```bash
-./etcdctl --user=root:123 user list
+./dasctl --user=root:123 user list
 # user1
 # user2
 # myuser
@@ -104,7 +104,7 @@ RPC: UserChangePassword
 #### Examples
 
 ```bash
-./etcdctl --user=root:123 user passwd myuser
+./dasctl --user=root:123 user passwd myuser
 # Password of myuser: #type new password for my user
 # Type password of myuser again for confirmation: #re-type the new password for my user
 # Password updated
@@ -123,7 +123,7 @@ RPC: UserGrantRole
 #### Examples
 
 ```bash
-./etcdctl --user=root:123 user grant-role userA roleA
+./dasctl --user=root:123 user grant-role userA roleA
 # Role roleA is granted to user userA
 ```
 
@@ -140,7 +140,7 @@ RPC: UserRevokeRole
 #### Examples
 
 ```bash
-./etcdctl --user=root:123 user revoke-role userA roleA
+./dasctl --user=root:123 user revoke-role userA roleA
 # Role roleA is revoked from user userA
 ```
 
