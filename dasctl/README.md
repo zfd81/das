@@ -23,10 +23,10 @@ RPC: UserAdd
 #### Examples
 
 ```bash
-./etcdctl --user=root:123 user add myuser
-# Password of myuser: #type password for my user
-# Type password of myuser again for confirmation:#re-type password for my user
-# User myuser created
+./dasctl --user=root:123 user add zfd
+# Password of myuser: #type password for zfd
+# Type password of zfd again for confirmation:#re-type password for zfd
+# User zfd created
 ```
 
 ### USER GET \<user name\> [options]
