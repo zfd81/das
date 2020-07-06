@@ -24,6 +24,8 @@ func NewUserCommand() *cobra.Command {
 	ac.AddCommand(newUserGetCommand())
 	ac.AddCommand(newUserListCommand())
 	ac.AddCommand(newUserChangePasswordCommand())
+	ac.AddCommand(newUserGrantServCommand())
+	ac.AddCommand(newUserRevokeServCommand())
 
 	return ac
 }
@@ -32,6 +34,8 @@ var (
 	passwordInteractive bool
 	passwordFromFlag    string
 	noPassword          bool
+	eps                 []string
+	er                  error
 )
 
 func newUserAddCommand() *cobra.Command {
@@ -44,6 +48,15 @@ func newUserAddCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&passwordInteractive, "interactive", true, "Read password from stdin instead of interactive terminal")
 	cmd.Flags().StringVar(&passwordFromFlag, "new-user-password", "", "Supply password from the command line flag")
 	cmd.Flags().BoolVar(&noPassword, "no-password", false, "Create a user without password (CN based auth only)")
+
+	//eps, er = cmd.Flags().GetStringSlice("fd")
+
+	eps = *cmd.Flags().StringSliceP("fd", "r", nil, "test arr")
+	if er != nil {
+		fmt.Println(er)
+	}
+	fmt.Println(eps)
+	fmt.Println("==========")
 
 	return &cmd
 }
@@ -88,6 +101,22 @@ func newUserChangePasswordCommand() *cobra.Command {
 	return &cmd
 }
 
+func newUserGrantServCommand() *cobra.Command {
+	return &cobra.Command{
+		Use:   "grant-serv <user name> <service name>",
+		Short: "Grants a role to a user",
+		Run:   userGrantServCommandFunc,
+	}
+}
+
+func newUserRevokeServCommand() *cobra.Command {
+	return &cobra.Command{
+		Use:   "revoke-serv <user name> <service name>",
+		Short: "Revokes a role from a user",
+		Run:   userRevokeServCommandFunc,
+	}
+}
+
 // userAddCommandFunc executes the "user add" command.
 func userAddCommandFunc(cmd *cobra.Command, args []string) {
 	if len(args) != 1 {
@@ -122,7 +151,7 @@ func userAddCommandFunc(cmd *cobra.Command, args []string) {
 		user = args[0]
 	}
 
-	fmt.Println("创建用户成功", user, password)
+	fmt.Printf("User %s created\n", user)
 }
 
 // userDeleteCommandFunc executes the "user delete" command.
@@ -173,6 +202,24 @@ func userChangePasswordCommandFunc(cmd *cobra.Command, args []string) {
 	}
 
 	fmt.Println("修改密码成功", args[0], password)
+}
+
+// userGrantServCommandFunc executes the "user grant-serv" command.
+func userGrantServCommandFunc(cmd *cobra.Command, args []string) {
+	if len(args) != 2 {
+		ExitWithError(ExitBadArgs, fmt.Errorf("user grant-serv command requires user name and service name as its argument"))
+	}
+
+	fmt.Println(args[0], args[1])
+}
+
+// userRevokeServCommandFunc executes the "user revoke-serv" command.
+func userRevokeServCommandFunc(cmd *cobra.Command, args []string) {
+	if len(args) != 2 {
+		ExitWithError(ExitBadArgs, fmt.Errorf("user revoke-serv requires user name and service name as its argument"))
+	}
+
+	fmt.Println(args[0], args[1])
 }
 
 func readPasswordInteractive(name string) string {
